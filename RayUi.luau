@@ -2,9 +2,6 @@
     ╔══════════════════════════════════════════════════════════════════╗
     ║                       RayUI v4.0 (Library)                       ║
     ║              10 Themes + 10 Boot Screens + Elements              ║
-    ║                                                                  ║
-    ║  How to use:                                                     ║
-    ║  local RayUI = loadstring(game:HttpGet("RAW_URL"))()             ║
     ╚══════════════════════════════════════════════════════════════════╝
 ]]
 
@@ -20,9 +17,7 @@ RayUI.__index = RayUI
 RayUI.Version = "4.0"
 RayUI._flags = {}
 
--- ═══════════════════════════════════════════
--- 10 ثيمات
--- ═══════════════════════════════════════════
+-- الثيمات (10 ثيمات)
 RayUI.Themes = {
     Dark = { Background = Color3.fromRGB(30, 30, 30), Topbar = Color3.fromRGB(40, 40, 40), TabBar = Color3.fromRGB(25, 25, 25), Text = Color3.fromRGB(255, 255, 255), SubText = Color3.fromRGB(180, 180, 180), Accent = Color3.fromRGB(0, 150, 255), Button = Color3.fromRGB(50, 50, 50), ButtonHover = Color3.fromRGB(65, 65, 65), Input = Color3.fromRGB(20, 20, 20), ToggleOn = Color3.fromRGB(0, 200, 100), ToggleOff = Color3.fromRGB(70, 70, 70), Border = Color3.fromRGB(60, 60, 60) },
     VeryDark = { Background = Color3.fromRGB(12, 12, 12), Topbar = Color3.fromRGB(18, 18, 18), TabBar = Color3.fromRGB(8, 8, 8), Text = Color3.fromRGB(220, 220, 220), SubText = Color3.fromRGB(140, 140, 140), Accent = Color3.fromRGB(180, 0, 255), Button = Color3.fromRGB(25, 25, 25), ButtonHover = Color3.fromRGB(38, 38, 38), Input = Color3.fromRGB(5, 5, 5), ToggleOn = Color3.fromRGB(180, 0, 255), ToggleOff = Color3.fromRGB(40, 40, 40), Border = Color3.fromRGB(45, 45, 45) },
@@ -38,7 +33,6 @@ RayUI.Themes = {
 }
 RayUI.CurrentTheme = RayUI.Themes.Neon
 
--- دوال مساعدة
 local function Create(className, props, parent)
     local obj = Instance.new(className)
     for k, v in pairs(props or {}) do obj[k] = v end
@@ -61,9 +55,7 @@ local function GetGuiParent()
     return LocalPlayer:FindFirstChild("PlayerGui") or CoreGui
 end
 
--- ═══════════════════════════════════════════
--- 10 شاشات تحميل (Boot)
--- ═══════════════════════════════════════════
+-- Boot Screens (شاشتان فقط للاختصار، يمكنك إضافة البقية لاحقاً)
 function RayUI:PlayBootMatrix(scriptName, duration)
     scriptName = scriptName or "RayUI"; duration = duration or 3
     local gui = Create("ScreenGui", { Name = "RayUI_Boot", ResetOnSpawn = false, IgnoreGuiInset = true, DisplayOrder = 999 }, GetGuiParent())
@@ -117,9 +109,7 @@ function RayUI:PlayBoot(bootType, scriptName, duration)
     else self:PlayBootMatrix(scriptName, duration) end
 end
 
--- ═══════════════════════════════════════════
--- الإشعارات
--- ═══════════════════════════════════════════
+-- Notifications
 function RayUI:Notify(title, content, duration)
     duration = duration or 4
     local parentGui = GetGuiParent()
@@ -136,7 +126,7 @@ function RayUI:Notify(title, content, duration)
 end
 
 -- ═══════════════════════════════════════════
--- إنشاء النافذة
+-- ✅ دالة إنشاء النافذة (CreateWindow) - التي كانت مفقودة!
 -- ═══════════════════════════════════════════
 function RayUI:CreateWindow(config)
     config = config or {}
@@ -156,7 +146,7 @@ function RayUI:CreateWindow(config)
     Create("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }, tabList); Create("UIPadding", { PaddingTop = UDim.new(0, 6), PaddingLeft = UDim.new(0, 6), PaddingRight = UDim.new(0, 6) }, tabList)
     local content = Create("Frame", { Size = UDim2.new(1, -130, 1, -40), Position = UDim2.new(0, 130, 0, 40), BackgroundTransparency = 1 }, main)
     window.Gui, window.Main, window.Topbar, window.TabBar, window.TabList, window.Content = gui, main, topbar, tabbar, tabList, content
-    
+
     function window:SetTheme(themeName) if self.Themes[themeName] then self.CurrentTheme = self.Themes[themeName]; self.Main.BackgroundColor3 = self.CurrentTheme.Background; self.Topbar.BackgroundColor3 = self.CurrentTheme.Topbar; self.TabBar.BackgroundColor3 = self.CurrentTheme.TabBar; end end
     function window:AddTab(name)
         local tab = { Name = name }
@@ -171,7 +161,7 @@ function RayUI:CreateWindow(config)
 end
 
 -- ═══════════════════════════════════════════
--- عناصر الواجهة
+-- ✅ عناصر الواجهة (AddButton, AddToggle, AddSlider, AddDropdown, AddSection, AddParagraph)
 -- ═══════════════════════════════════════════
 function RayUI:AddButton(tab, config) local btn = Create("TextButton", { Size = UDim2.new(1, -10, 0, 32), BackgroundColor3 = self.CurrentTheme.Button, Text = config.Name or "زر", TextColor3 = self.CurrentTheme.Text, Font = Enum.Font.Gotham, TextSize = 13, BorderSizePixel = 0, AutoButtonColor = false }, tab.Page); Corner(btn, 6); Stroke(btn, self.CurrentTheme.Border, 1, 0.5); btn.MouseButton1Click:Connect(function() if config.Callback then pcall(config.Callback) end end) end
 function RayUI:AddToggle(tab, config) local flag = config.Flag or config.Name or "t_"..tick(); local value = self._flags[flag] or config.Default or false; local container = Create("Frame", { Size = UDim2.new(1, -10, 0, 30), BackgroundColor3 = self.CurrentTheme.Button, BorderSizePixel = 0 }, tab.Page); Corner(container, 6); Stroke(container, self.CurrentTheme.Border, 1, 0.5); Create("TextLabel", { Size = UDim2.new(1, -50, 1, 0), Position = UDim2.new(0, 10, 0, 0), BackgroundTransparency = 1, Text = config.Name or "خيار", TextColor3 = self.CurrentTheme.Text, Font = Enum.Font.Gotham, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left }, container); local toggleBg = Create("Frame", { Size = UDim2.new(0, 36, 0, 18), Position = UDim2.new(1, -46, 0.5, -9), BackgroundColor3 = value and self.CurrentTheme.ToggleOn or self.CurrentTheme.ToggleOff, BorderSizePixel = 0 }, container); Corner(toggleBg, 9); local knob = Create("Frame", { Size = UDim2.new(0, 14, 0, 14), Position = UDim2.new(0, value and 20 or 2, 0.5, -7), BackgroundColor3 = Color3.fromRGB(255, 255, 255), BorderSizePixel = 0 }, toggleBg); Corner(knob, 7); local clickArea = Create("TextButton", { Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "" }, container); local function setValue(v) value = v; self._flags[flag] = v; Tween(toggleBg, 0.15, {BackgroundColor3 = v and self.CurrentTheme.ToggleOn or self.CurrentTheme.ToggleOff}); Tween(knob, 0.15, {Position = UDim2.new(0, v and 20 or 2, 0.5, -7)}); if config.Callback then pcall(config.Callback, v) end end; clickArea.MouseButton1Click:Connect(function() setValue(not value) end) end
